@@ -20,4 +20,7 @@ fifa = fifa.drop(columns=['Loaned_From'])
 fifa = fifa.dropna()
 
 # %%
+fifa['Wage'] = fifa['Wage'].map(lambda x: x[1:][:-1])
+fifa['Wage'] = pd.to_numeric(fifa['Wage'])
 
+# %%
