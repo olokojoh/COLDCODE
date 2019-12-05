@@ -96,6 +96,10 @@ fifa = fifa.drop(columns=['Loaned_From'])
 fifa = fifa.dropna()
 
 # %% Preprocess
+from statsmodels.formula.api import ols
+
+overall_skills = fifa.loc[:,'LS':'GKReflexes']
+overall_skills.insert(0, 'Overall', fifa['Overall'])
 
 fifa['Wage'] = fifa['Wage'].map(lambda x: x[1:][:-1])
 fifa['Wage'] = pd.to_numeric(fifa['Wage'])
@@ -105,11 +109,6 @@ for i in overall_skills.columns:
         overall_skills[i] = overall_skills[i].apply(lambda x: int(x.split('+')[0])+int(x.split('+')[1]))
 
 # %%
-from statsmodels.formula.api import ols
-overall_skills = fifa.loc[:,'LS':'GKReflexes']
-overall_skills.insert(0, 'Overall', fifa['Overall'])
-
-import seaborn as sns
 
 # sns.set()
 # sns.pairplot(overall_skills.iloc[:,2:])
