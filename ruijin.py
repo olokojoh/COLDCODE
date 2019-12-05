@@ -24,12 +24,12 @@ fifa = fifa.dropna()
 fifa['Wage'] = fifa['Wage'].map(lambda x: x[1:][:-1])
 fifa['Wage'] = pd.to_numeric(fifa['Wage'])
 
-#%%
+# %%
 plt.hist(fifa['Wage'], label='fifawage')
 plt.show()
 #From the plot we can see salaries are right skewed
 
-#%%
+# %%
 #from the plot we can see high-level salaries are much less than the lower-level salary, and first we look into the low-level salary which is less than 200K and 50K  and 5K
 #Salaries are right-skewed distributed in each group, and the frequencies become less and less as salaries go up
 plt.hist(fifa[fifa['Wage']<200]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
@@ -40,7 +40,7 @@ plt.hist(fifa[fifa['Wage']<50]['Wage'], label='fifawage',edgecolor='black', line
 #%%
 plt.hist(fifa[fifa['Wage']<5]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
 
-# %%
+#%%
 #Then we look into the high salaries, we can see the frequencies in each level are sparse and scattered, and also some high outlier exist
 plt.hist(fifa[fifa['Wage']>200]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
 
@@ -116,61 +116,9 @@ plt.show()
 #Then we build the liner model to see which variables could have significant effect on wages
 modelwage = ols(formula='Wage ~ Age+Overall+Potential+Special+C(International_Reputation)+C(Weak_Foot)+C(Skill_Moves)+C(Work_Rate)+C(Body_Type)+C(Position)+Jersey_Number+BMI+Crossing+Finishing+HeadingAccuracy+ShortPassing+Volleys+Dribbling+Curve+FKAccuracy+LongPassing+BallControl+Acceleration+SprintSpeed+Agility+Reactions+Balance+ShotPower+Jumping+Stamina+Strength+LongShots+Aggression+Interceptions+Positioning+Vision+Penalties+Composure+Marking+StandingTackle+SlidingTackle+GKDiving+GKHandling+GKKicking+GKPositioning+GKReflexes', data=fifa).fit()
 print(modelwage.summary())
+#We drop the weak foot, body type, position, age, overall, special, BMI and skills
 
 #%%
-#We drop the weak foot, body type, position, age, Jersey Number, Crossing, BMI and HeadingAccuracy, ShortPassing, FKAccuracy,LongPassing, BallControl, Acceleration, SprintSpeed, Agility, ShotPower, Jumping, Stamina, Strength, Longshots, Aggression, GKKicking, GKPositioning
-modelwage2 = ols(formula='Wage ~ Potential+Special+C(International_Reputation)+C(Skill_Moves)+C(Work_Rate)+Age+Overall+Finishing+Volleys+Dribbling+Curve+Reactions+Balance+Interceptions+Positioning+Vision+Penalties+Composure+Marking+StandingTackle+SlidingTackle+GKDiving+GKHandling+GKReflexes', data=fifa).fit()
+modelwage2 = ols(formula='Wage ~ Potential+Special+C(International_Reputation)+C(Skill_Moves)+C(Work_Rate)+Jersey_Number', data=fifa).fit()
 print(modelwage2.summary())
 
-# #%%
-# from sklearn.cluster import KMeans
-# xwage = fifa[['International_Reputation','Skill_Moves','Age','Overall','Potential','Special']]
-# ywage = fifa['Wage']
-# import pandas as pd
-# km_xwage = KMeans( n_clusters=4, init='random', n_init=10, max_iter=300, tol=1e-04, random_state=0 )
-# y_km = km_xwage.fit_predict(xwage)
-
-# #%%
-# # plot
-# # plot the 4 clusters
-# index1 = 0
-# index2 = 3
-# plt.scatter( xwage[y_km==0].iloc[:,index1], ywage[y_km==0], s=50, c='lightgreen', marker='s', edgecolor='black', label='cluster 1' )
-# plt.scatter( xwage[y_km==1].iloc[:,index1], ywage[y_km==1], s=50, c='orange', marker='o', edgecolor='black', label='cluster 2' )
-# plt.scatter( xwage[y_km==2].iloc[:,index1], ywage[y_km==2], s=50, c='lightblue', marker='v', edgecolor='black', label='cluster 3' )
-# plt.scatter( xwage[y_km==3].iloc[:,index1], ywage[y_km==3], s=50, c='yellow', marker='x', edgecolor='black', label='cluster 4' )
-# # plot the centroids
-# # plt.scatter( xwage[y_km==0].iloc[:,index1], xwage[y_km==0].iloc[:,index2], s=50, c='lightgreen', marker='s', edgecolor='black', label='cluster 1' )
-# # plt.scatter( xwage[y_km==1].iloc[:,index1], xwage[y_km==1].iloc[:,index2], s=50, c='orange', marker='o', edgecolor='black', label='cluster 2' )
-# # plt.scatter( xwage[y_km==2].iloc[:,index1], xwage[y_km==2].iloc[:,index2], s=50, c='lightblue', marker='v', edgecolor='black', label='cluster 3' )
-# # plt.scatter( xwage[y_km==3].iloc[:,index1], xwage[y_km==3].iloc[:,index2], s=50, c='yellow', marker='x', edgecolor='black', label='cluster 4' )
-# # # plot the centroids
-# plt.scatter( xwage.cluster_centers_[:, index1], ywage, s=250, marker='*', c='red', edgecolor='black', label='centroids' )
-# plt.legend(scatterpoints=1)
-# plt.xlabel(xwage.columns[index1])
-# plt.ylabel(ywage.columns[index1])
-# plt.grid()
-# plt.show()
-
-# # %%
-# # plot
-# # plot the 5 clusters
-# km_xwage2 = KMeans( n_clusters=5, init='random', n_init=10, max_iter=300, tol=1e-04, random_state=0 )
-# y_km2 = km_xwage2.fit_predict(xwage)
-# index1 = 0
-# index2 = 1
-# plt.scatter( xwage[y_km2==0].iloc[:,index1], xwage[y_km2==0].iloc[:,index2], s=50, c='lightgreen', marker='s', edgecolor='black', label='cluster 1' )
-# plt.scatter( xwage[y_km2==1].iloc[:,index1], xwage[y_km2==1].iloc[:,index2], s=50, c='orange', marker='o', edgecolor='black', label='cluster 2' )
-# plt.scatter( xwage[y_km2==2].iloc[:,index1], xwage[y_km2==2].iloc[:,index2], s=50, c='lightblue', marker='v', edgecolor='black', label='cluster 3' )
-# plt.scatter( xwage[y_km2==3].iloc[:,index1], xwage[y_km2==3].iloc[:,index2], s=50, c='yellow', marker='x', edgecolor='black', label='cluster 4' )
-# plt.scatter( xwage[y_km2==4].iloc[:,index1], xwage[y_km2==4].iloc[:,index2], s=50, c='red', marker='x', edgecolor='black', label='cluster 5' )
-# # plot the centroids
-# plt.scatter(km_xwage2.cluster_centers_[:, index1], km_xwage2.cluster_centers_[:, index2], s=250, marker='*', c='red', edgecolor='black', label='centroids' )
-# plt.legend(scatterpoints=1)
-# plt.xlabel(xwage.columns[index1])
-# plt.ylabel(xwage.columns[index2])
-# plt.grid()
-# plt.show()
-
-
-# %%
