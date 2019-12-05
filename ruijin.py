@@ -1,3 +1,29 @@
+#1.  Background and Data Description
+
+# Our group chose to analyze data from the Fifa19. We used dataset
+#  available on Kaggle,(https://www.kaggle.com/karangadiya/fifa19), 
+#  which is scrapped from original source sofifa(https://sofifa.com/)
+# The total size of the dataset is about 18206 rows with 88 fields.
+# Fields include demographic information (name, age, height, nationality etc.) for 
+# each player, the wage, evaluation(international reputation, overall, potential), 
+# the Positions (LS, ST, RS, LW, LF, CF, RF, RW, LAM, CAM, RAM, LM, LCM, CM, RCM, 
+# RM, LWB, LDM, CDM, RDM, RWB, LB, LCB, CB, RCB, RB), the Scores for Attacking
+#  (Crossing, Finishing, Heading, Accuracy, ShortPassing, Volleys), 
+# the Scores for Skill (Dribbling, Curve, FKAccuracy, LongPassing, BallControl), 
+# the Scores for Movement (Acceleration, SprintSpeed, Agility, Reactions, Balance),
+# the Scores for Power (ShotPower, Jumping, Stamina, Strength, LongShots), 
+# the Scores for Mentality (Aggression, Interceptions, Positioning, Vision, Penalties, Composure),
+# the Scores for defending (Marking, StandingTackle, SlidingTackle), the Scores for
+# Goalkeeping (GKDiving, GKHandling, GKKicking, GKPositioning, GKReflexes), Release Clause.
+
+#2. SMART Question
+# How is wage distributed? Can we model wage with soccer players’ features? 
+# Is player’s overall rating calculated from a formula of abilities rating? Or is it determined experimentally?
+# Is preferred foot affected by his abilities rating?
+# Is the international reputation of players affected by theirs scores?
+# Can we predict the preferred foot form score values?
+
+#3. Data Preprocess and Cleaning
 #%% [markdown]
 import os
 import numpy as np
@@ -24,25 +50,35 @@ fifa = fifa.dropna()
 fifa['Wage'] = fifa['Wage'].map(lambda x: x[1:][:-1])
 fifa['Wage'] = pd.to_numeric(fifa['Wage'])
 
-# %%
+#%%
 plt.hist(fifa['Wage'], label='fifawage')
+plt.xlabel('Wage')
+plt.ylabel('Frequency')
 plt.show()
 #From the plot we can see salaries are right skewed
 
-# %%
+#%%
 #from the plot we can see high-level salaries are much less than the lower-level salary, and first we look into the low-level salary which is less than 200K and 50K  and 5K
 #Salaries are right-skewed distributed in each group, and the frequencies become less and less as salaries go up
 plt.hist(fifa[fifa['Wage']<200]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
+plt.xlabel('Wage under 200')
+plt.ylabel('Frequency')
 
 #%%
 plt.hist(fifa[fifa['Wage']<50]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
+plt.xlabel('Wage under 50')
+plt.ylabel('Frequency')
 
 #%%
-plt.hist(fifa[fifa['Wage']<5]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
+plt.hist(fifa[fifa['Wage']<20]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
+plt.xlabel('Wage under 20')
+plt.ylabel('Frequency')
 
-#%%
+# %%
 #Then we look into the high salaries, we can see the frequencies in each level are sparse and scattered, and also some high outlier exist
 plt.hist(fifa[fifa['Wage']>200]['Wage'], label='fifawage',edgecolor='black', linewidth=1.2)
+plt.xlabel('Wage above 200')
+plt.ylabel('Frequency')
 
 # %%
 #BMI is an indicator of health condition, and we increase a new variable bmi(=height(m)/weight(kg)^2)
@@ -116,9 +152,10 @@ plt.show()
 #Then we build the liner model to see which variables could have significant effect on wages
 modelwage = ols(formula='Wage ~ Age+Overall+Potential+Special+C(International_Reputation)+C(Weak_Foot)+C(Skill_Moves)+C(Work_Rate)+C(Body_Type)+C(Position)+Jersey_Number+BMI+Crossing+Finishing+HeadingAccuracy+ShortPassing+Volleys+Dribbling+Curve+FKAccuracy+LongPassing+BallControl+Acceleration+SprintSpeed+Agility+Reactions+Balance+ShotPower+Jumping+Stamina+Strength+LongShots+Aggression+Interceptions+Positioning+Vision+Penalties+Composure+Marking+StandingTackle+SlidingTackle+GKDiving+GKHandling+GKKicking+GKPositioning+GKReflexes', data=fifa).fit()
 print(modelwage.summary())
-#We drop the weak foot, body type, position, age, overall, special, BMI and skills
 
 #%%
-modelwage2 = ols(formula='Wage ~ Potential+Special+C(International_Reputation)+C(Skill_Moves)+C(Work_Rate)+Jersey_Number', data=fifa).fit()
+#We drop the variable with large p value until all p values are down to less than 5%
+#(For categorical variables, though some dimesnions have large p value(>5%), we still keep them when other dimensions are signficant)
+modelwage2 = ols(formula='Wage ~ Potential+Special+C(International_Reputation)+C(Skill_Moves)+C(Work_Rate)+Age+Overall+Finishing+Volleys+Reactions+Balance+Positioning+Vision+Composure+SlidingTackle+GKDiving', data=fifa).fit()
 print(modelwage2.summary())
 
