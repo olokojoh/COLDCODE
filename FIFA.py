@@ -218,8 +218,6 @@ pd.crosstab(y_true,round(pd.Series(y_pred)),rownames=['ACTUAL'],colnames=['PRED'
 
 #%%
 ##Preferred foot-ability
-fifa['Weight'] = fifa['Weight'].map(lambda x: x[:][:-2])
-fifa['Weight'] = pd.to_numeric(fifa['Weight'])
 
 #%%
 def P_foot (row):
