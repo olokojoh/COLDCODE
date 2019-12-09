@@ -308,6 +308,18 @@ accuracy = a.split()[a.split().index('accuracy')+1]
 
 print('The accuracy of logistics regression is', accuracy)
 
+cof = admitlogit.coef_.tolist()[0]
+low2highc = sorted(cof)
+name = []
+coff = []
+for i in range(len(low2highc)):
+  x = len(low2highc)-i-1
+  name.append(xadmit.columns[cof.index(low2highc[x])])
+  coff.append(str(round(low2highc[x]*100, 3)) + '%')
+
+log = pd.DataFrame(name, coff)
+  # print(xadmit.columns[cof.index(low2highc[x])], str(round(low2highc[x]*100, 3)) + '%')
+
 
 #%% 7. KNN of reputation.
 ##knn model on predict reputation.
